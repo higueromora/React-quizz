@@ -1,11 +1,17 @@
 import { create } from 'zustand'
 import { Question } from '../types'
+import conffeti from 'canvas-confetti'
 
 interface State {
     questions: Question[]
     currentQuestion: number,
     fetchQuestions: (limit: number) => Promise<void>
     selectAnswer: (questionId: number, answersIndex: number) => void
+    goNextQuestion: () => void
+    goPreviousQuestion: () => void
+    reset: () => void
+    answeredQuestions: number[]
+    setAnsweredQuestion: (id:number) => void
 }
 
 
@@ -13,6 +19,7 @@ export const useQuestionsStore = create<State>((set, get) => {
     return {
         questions: [],
         currentQuestion: 0,
+        answeredQuestions: [],
         fetchQuestions: async (limit: number) => {
             const res = await fetch('http://localhost:5173/data.json')
             const json = await res.json()
@@ -27,7 +34,7 @@ export const useQuestionsStore = create<State>((set, get) => {
             const questionIndex = newQuestion.findIndex(q => q.id === questionId)
             const questionInfo = newQuestion[questionIndex]
             const isCorrectUserAnswer = questionInfo.correctAnswer === answersIndex
-
+            if(isCorrectUserAnswer) conffeti()
             newQuestion[questionIndex] = {
                 ...questionInfo,
                 isCorrectUserAnswer,
@@ -36,6 +43,28 @@ export const useQuestionsStore = create<State>((set, get) => {
 
             set({questions: newQuestion})
             
-        }
+        },
+        goNextQuestion: () => {
+            const { currentQuestion, questions } = get()
+            const nextQuestion = currentQuestion + 1
+
+            if (nextQuestion < questions.length) {
+                set({ currentQuestion: nextQuestion })
+            }
+        },
+        goPreviousQuestion: () => {
+            const { currentQuestion } = get()
+            const previousQuestion = currentQuestion - 1
+      
+            if (previousQuestion >= 0) {
+              set({ currentQuestion: previousQuestion })
+            }
+          },
+        reset: () => {
+        set({ currentQuestion: 0, questions: [] })
+        },
+        setAnsweredQuestion: (id: number) => set((state) => ({
+            answeredQuestions: [...state.answeredQuestions, id]
+        }))
     }
 })
