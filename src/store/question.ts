@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { Question } from '../types'
 import conffeti from 'canvas-confetti'
+import { persist } from 'zustand/middleware'
 
 interface State {
     questions: Question[]
@@ -15,7 +16,7 @@ interface State {
 }
 
 
-export const useQuestionsStore = create<State>((set, get) => {
+export const useQuestionsStore = create<State>()(persist((set, get) => {
     return {
         questions: [],
         currentQuestion: 0,
@@ -61,10 +62,12 @@ export const useQuestionsStore = create<State>((set, get) => {
             }
           },
         reset: () => {
-        set({ currentQuestion: 0, questions: [] })
+            set({ currentQuestion: 0, questions: [] })
         },
         setAnsweredQuestion: (id: number) => set((state) => ({
             answeredQuestions: [...state.answeredQuestions, id]
         }))
     }
-})
+}, {
+    name: 'questions',
+}))
