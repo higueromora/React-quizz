@@ -5,11 +5,11 @@ import { twilight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Footer } from "./Footer";
 
 const getBackgroundColor = (info: QuestionType, index: number) => {
-    const {useSelectedAnswer, correctAnswer}  = info
-    if (useSelectedAnswer == null) return 'transparent'
-    if(index !== correctAnswer && index !== useSelectedAnswer) return 'transparent'
+    const {userSelectedAnswer, correctAnswer}  = info
+    if (userSelectedAnswer == null) return 'transparent'
+    if(index !== correctAnswer && index !== userSelectedAnswer) return 'transparent'
     if(index === correctAnswer) return 'bg-green-500'
-    if(index === useSelectedAnswer) return 'bg-red-500'
+    if(index === userSelectedAnswer) return 'bg-red-500'
     return 'transparent'
 }
 

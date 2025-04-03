@@ -39,7 +39,7 @@ export const useQuestionsStore = create<State>()(persist((set, get) => {
             newQuestion[questionIndex] = {
                 ...questionInfo,
                 isCorrectUserAnswer,
-                useSelectedAnswer: answersIndex
+                userSelectedAnswer: answersIndex
             }
 
             set({questions: newQuestion})
@@ -62,7 +62,8 @@ export const useQuestionsStore = create<State>()(persist((set, get) => {
             }
           },
         reset: () => {
-            set({ currentQuestion: 0, questions: [] })
+            set({ currentQuestion: 0, questions: [], answeredQuestions: [] })
+            localStorage.removeItem('questions')
         },
         setAnsweredQuestion: (id: number) => set((state) => ({
             answeredQuestions: [...state.answeredQuestions, id]
